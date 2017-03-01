@@ -47,3 +47,24 @@ void preprocessor::removeChar(String &str, String Char)
 
 bool preprocessor::isChar(String &str, String Char)
 {return str.left(1)==Char;}
+
+String preprocessor::getToken(String str, vector<String> terminatorList)
+{
+    String newstr="";
+
+    for(auto i:str)
+    {
+        for(String j:terminatorList)
+        {
+            if(i==j)
+                return newstr;
+        }
+        //不是终结符，直接拼接即可
+        newstr+=i;
+    }
+    mistake("规约区块名时没有遇到终结符");
+    return NULL_String;
+}
+
+void preprocessor::mistake(String information)
+{aLib->output("error:"+information);}

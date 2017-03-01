@@ -18,7 +18,8 @@ TEMPLATE = app
 SOURCES += main.cpp \
     Lib.cpp \
     mini.cpp \
-    preprocessor.cpp
+    preprocessor.cpp \
+    tree.cpp
 
 HEADERS += \
     Lib.h \
