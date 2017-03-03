@@ -3,6 +3,9 @@
 void Tree::addField(String var, String val)
 {this->field.push_back(variable(var,val));}
 
+void Tree::addPar(String var, String val)
+{this->par.push_back(variable(var,val));}
+
 void Tree::addTree(Tree *tree)
 {this->subtree.push_back(tree);}
 
@@ -13,6 +16,20 @@ void Tree::deleteField(String var)
         if((*itor).first==var)
         {
             /*itor=*/field.erase(itor);
+            return;
+        }
+        else
+        {itor++;}
+    }
+}
+
+void Tree::deletePar(String var)
+{
+    for(auto itor=par.begin();itor!=par.end();)
+    {
+        if((*itor).first==var)
+        {
+            /*itor=*/par.erase(itor);
             return;
         }
         else
@@ -37,6 +54,16 @@ void Tree::deleteTree(Tree *tree)
 String Tree::readVar(String var)
 {
     for(variable i:field)
+    {
+        if(i.first==var)
+            return i.second;
+    }
+    return NULL_String;
+}
+
+String Tree::readPar(String var)
+{
+    for(variable i:par)
     {
         if(i.first==var)
             return i.second;

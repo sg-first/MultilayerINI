@@ -11,14 +11,18 @@ class Tree
 private:
     vector<Tree*>subtree;
     vector<variable>field;
+    vector<variable>par;
 public:
     //基本操作
     void addField(String var,String val);
     void deleteField(String var);
+    void addPar(String var,String val);
+    void deletePar(String var);
     void addTree(Tree *tree);
     void deleteTree(Tree *tree);
     //实际操作
     String readVar(String var);
+    String readPar(String var);
     //至于遍历子树就自己遍历吧……
 };
 
@@ -39,7 +43,7 @@ public:
 
 private:
     //分析有关
-    String getBlockName(String str);
+    String getBlockName(String &str);
     //存储有关
     list<String>codelist;
     Tree *parsetree=nullptr;

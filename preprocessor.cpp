@@ -39,10 +39,14 @@ void preprocessor::deleteSpace(String &str) //把几个连一起的空格变成�
     str=newstr;
 }
 
-void preprocessor::removeChar(String &str, String Char)
+bool preprocessor::removeChar(String &str, String Char)
 {
     if(isChar(str,Char))
-    {str.right(str.length()-1);}
+    {
+        str.right(str.length()-1);
+        return true;
+    }
+    return false;
 }
 
 bool preprocessor::isChar(String &str, String Char)
@@ -68,3 +72,6 @@ String preprocessor::getToken(String str, vector<String> terminatorList)
 
 void preprocessor::mistake(String information)
 {aLib->output("error:"+information);}
+
+int preprocessor::getLen(String literal)
+{return literal.length();}
