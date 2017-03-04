@@ -49,7 +49,7 @@ bool preprocessor::removeChar(String &str, String Char)
     return false;
 }
 
-bool preprocessor::isChar(String &str, String Char)
+bool preprocessor::isChar(String str, String Char)
 {return str.left(1)==Char;}
 
 String preprocessor::getToken(String str, vector<String> terminatorList)

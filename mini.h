@@ -47,7 +47,7 @@ private:
     String getParName(String &str);
     String getParVal(String &str);
     String blockEnd(String &str, vector<SI>&stack);
-    void blockBegin(String &str, vector<SI>&stack, vector<String> &layer);
+    void blockBegin(String &str, vector<SI>&stack, vector<String> &layer, int &nowLayerSub);
     //存储有关
     list<String>codelist;
     Tree *parsetree=nullptr;

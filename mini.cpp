@@ -55,7 +55,7 @@ String MINI::blockEnd(String &str,vector<SI> &stack)
     stack.pop_back(); //似乎直接弹栈即可
 }
 
-void MINI::blockBegin(String &str, vector<SI> &stack, vector<String> &layer)
+void MINI::blockBegin(String &str, vector<SI> &stack, vector<String> &layer,int &nowLayerSub)
 {
     String blockName=getBlockName(str);
     preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
@@ -91,7 +91,7 @@ String MINI::readVar(vector<String> layer, String var)
             else
             {
                 //是区块起始
-                blockBegin(str,stack,layer);
+                blockBegin(str,stack,layer,nowLayerSub);
             }
             continue;
         }
@@ -139,7 +139,7 @@ String MINI::readPar(vector<String> layer, String par)
             else
             {
                 //是区块起始
-                blockBegin(str,stack,layer);
+                blockBegin(str,stack,layer,nowLayerSub);
 
                 if(!preprocessor::isChar(str,">")) //检查该区块是否有参数
                 {
