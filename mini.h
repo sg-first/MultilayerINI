@@ -5,6 +5,7 @@
 #include <utility>
 
 typedef pair<String,String> variable;
+typedef pair<String,bool>SI; //包含是否跳过信息的栈元素类型
 
 class Tree
 {
@@ -36,14 +37,17 @@ public:
     //读
     String readVar(vector<String>layer,String var);
     String getCode(vector<String>layer);
-    bool haveVar(vector<String>layer,String var);
-    bool havelayer(vector<String>layer);
+    String readPar(vector<String>layer,String par);
     //写
     void writeVar(vector<String>layer,String var,String val);
 
 private:
     //分析有关
     String getBlockName(String &str);
+    String getParName(String &str);
+    String getParVal(String &str);
+    String blockEnd(String &str, vector<SI>&stack);
+    void blockBegin(String &str, vector<SI>&stack, vector<String> &layer);
     //存储有关
     list<String>codelist;
     Tree *parsetree=nullptr;
