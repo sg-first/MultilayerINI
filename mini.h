@@ -44,6 +44,8 @@ public:
     String readVar(vector<String>layer,String var);
     String getCode(vector<String>layer);
     String readPar(vector<String>layer,String par);
+    String readVarInTree(vector<String>layer,String var);
+    String readParInTree(vector<String>layer,String par);
     //写
     String writeVar(vector<String>layer,String var,String val);
     void writeVarToFile(vector<String>layer,String var,String val,String path);

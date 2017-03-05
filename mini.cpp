@@ -317,6 +317,7 @@ String MINI::writeVar(vector<String> layer, String var, String val)
     }
 
     setCode(newcode);
+    initParsetree();
     return newcode;
 }
 
