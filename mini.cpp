@@ -196,6 +196,7 @@ String MINI::getCode(vector<String> layer)
 
     for(String str:codelist)
     {
+        String oriStr=str; //没有消耗过字符的该句
         preprocessor::removeChar(str," ");
 
         //对区块的处理
@@ -209,7 +210,7 @@ String MINI::getCode(vector<String> layer)
                     String blockName=getBlockName(str);
                     if(blockName==layer.back()) //准备弹出要取内部代码的区块
                         return newcode;
-                    newcode+=str+"\n\r"; //区块结尾不算在内，所以后连接
+                    newcode+=oriStr+"\n\r"; //区块结尾不算在内，所以后连接
                 }
 
                 if(!blockEnd(str,stack))
@@ -220,7 +221,7 @@ String MINI::getCode(vector<String> layer)
                 //是区块起始
                 blockBegin(str,stack,layer,nowLayerSub);
                 if(inBlock)
-                    newcode+=str+"\n\r"; //区块开头不算在内，所以先连接
+                    newcode+=oriStr+"\n\r"; //区块开头不算在内，所以先连接
                 if(stack.size()==layer.size())
                     inBlock=true;
             }
@@ -229,8 +230,85 @@ String MINI::getCode(vector<String> layer)
 
         //其它
         if(inBlock)
-            newcode+=str+"\n\r";
+            newcode+=oriStr+"\n\r";
         continue;
     }
     return NULL_String;
+}
+
+void MINI::writeVar(vector<String> layer, String var, String val)
+{
+    vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
+    int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
+    String newcode="";
+    bool finished=false;
+    String addcode=var+"="+val;
+
+    for(String str:codelist)
+    {
+        if(finished)
+        {
+            newcode+=str+"\n\r";
+            continue;
+        }
+        else
+        {
+            String oriStr=str;
+            preprocessor::removeChar(str," ");
+
+            //对区块的处理
+            if(preprocessor::removeChar(str,"<"))
+            {
+                if(preprocessor::removeChar(str,"/")) //检查是区块起始还是区块结尾
+                {
+                    //是区块结尾
+                    String blockName=getBlockName(str);
+                    if(blockName==layer.back()) //准备弹出要添加（修改）变量的区块
+                    {
+                        newcode+=addcode+"\n\r"+oriStr+"\n\r";
+                        finished=true;
+                        continue;
+                    }
+
+                    if(!blockEnd(str,stack))
+                    {return NULL_String;}
+                }
+                else
+                {
+                    //是区块起始
+                    blockBegin(str,stack,layer,nowLayerSub);
+                }
+                newcode+=oriStr+"\n\r";
+                continue;
+            }
+
+            //对field的处理
+            if(str.indexOf("=")!=-1)
+            {
+                if(stack.size()!=0&&stack.back().second) //检查该区块是否需要跳过
+                {
+                    newcode+=oriStr+"\n\r";
+                    continue;
+                }
+
+                if(stack.size()!=layer.size()) //检查是否已经到达要查找的区块的层级
+                {
+                    newcode+=oriStr+"\n\r";
+                    continue;
+                }
+
+                QStringList varlist=str.split("=");
+                if(varlist[0]==var)
+                {
+                    newcode+=addcode+"\n\r";
+                    finished=true;
+                    continue;
+                }
+            }
+
+            //什么都不是
+            newcode+=oriStr+"\n\r";
+            continue;
+        }
+    }
 }
