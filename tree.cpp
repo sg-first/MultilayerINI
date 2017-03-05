@@ -57,14 +57,25 @@ void Tree::deleteTree(Tree *tree)
     }
 }
 
-String Tree::readVar(String var)
+String Tree::readVar(String var, bool searchAll)
 {
     for(variable i:field)
     {
         if(i.first==var)
             return i.second;
     }
-    return NULL_String;
+    if(!searchAll)
+    {return NULL_String;}
+    else
+    {
+        for(Tree* t:subtree)
+        {
+            String ret=t->readVar(var,true);
+            if(set!=NULL_String)
+                return ret;
+        }
+        return NULL_String;
+    }
 }
 
 String Tree::readPar(String var)

@@ -14,8 +14,6 @@ private:
     vector<variable>par;
     Tree* father;
 public:
-    Tree(String name,Tree* father=nullptr):name(name),father(father){}
-    ~Tree();
     //基本操作
     void addField(String var,String val);
     void deleteField(String var);
@@ -25,11 +23,14 @@ public:
     void deleteTree(Tree *tree);
     Tree* getFather();
     //实际操作
-    String readVar(String var);
+    String readVar(String var,bool searchAll=false);
     String readPar(String var);
     //至于遍历子树就自己遍历吧……
     vector<Tree*>subtree;
     String name;
+
+    Tree(String name,Tree* father=nullptr):father(father),name(name){}
+    ~Tree();
 };
 
 class MINI
