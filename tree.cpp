@@ -1,12 +1,18 @@
 #include "mini.h"
 
+Tree::~Tree()
+{
+    for(Tree* i:this->subtree)
+    {delete i;}
+}
+
 void Tree::addField(String var, String val)
 {this->field.push_back(variable(var,val));}
 
 void Tree::addPar(String var, String val)
 {this->par.push_back(variable(var,val));}
 
-void Tree::addTree(Tree *tree)
+void Tree::addChildNode(Tree *tree)
 {this->subtree.push_back(tree);}
 
 void Tree::deleteField(String var)
@@ -70,3 +76,6 @@ String Tree::readPar(String var)
     }
     return NULL_String;
 }
+
+Tree* Tree::getFather()
+{return this->father;}

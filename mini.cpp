@@ -7,6 +7,12 @@ MINI::MINI(String path)
     this->setCode(code);
 }
 
+void MINI::initParsetree()
+{
+    delete parsetree;
+    parsetree=nullptr;
+}
+
 void MINI::setCode(String code)
 {
     this->codelist.clear();
@@ -114,7 +120,6 @@ String MINI::readVar(vector<String> layer, String var)
         }
 
         //什么都不是
-        continue;
     }
     return NULL_String;
 }
@@ -182,7 +187,6 @@ String MINI::readPar(vector<String> layer, String par)
         }
 
         //别的case都不管
-        continue;
     }
     return NULL_String;
 }
@@ -320,4 +324,90 @@ void MINI::writeVarToFile(vector<String> layer, String var, String val, String p
 {
     aLib->RemoveFile(path);
     aLib->WriteTXT(path,writeVar(layer,var,val));
+}
+
+void MINI::toTree()
+{
+    vector<String>stack;
+    Tree* nowNode=new Tree(""); //根节点没名字
+    this->parsetree=nowNode;
+
+    for(String str:codelist)
+    {
+        preprocessor::removeChar(str," ");
+
+        //对区块的处理
+        if(preprocessor::removeChar(str,"<"))
+        {
+            if(preprocessor::removeChar(str,"/")) //检查是区块起始还是区块结尾
+            {
+                //是区块结尾
+                String blockName=getBlockName(str);
+                preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                if(blockName!=stack.back()) //检查和区块头是否对应
+                {
+                    preprocessor::mistake("区块结尾和最近的区块头不对应");
+                    initParsetree();
+                    return;
+                }
+                if(!preprocessor::isChar(str,">"))
+                {
+                    preprocessor::mistake("区块尾不能含有除区块名外其他元素");
+                    return;
+                }
+                //似乎直接弹栈即可
+                stack.pop_back();
+                nowNode=nowNode->getFather();
+            }
+            else
+            {
+                String blockName=getBlockName(str);
+                preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                stack.push_back(blockName);
+
+                Tree* childNode=new Tree(blockName,nowNode);
+                nowNode->addChildNode(childNode);
+                nowNode=childNode;
+
+                if(!preprocessor::isChar(str,">")) //检查该区块是否有参数
+                {
+                    while(1) //循环获取区块参数
+                    {
+                        String parName=getParName(str);
+                        preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                        if(!preprocessor::removeChar(str,"="))
+                        {
+                            preprocessor::mistake("每个区块参数必须有一个值");
+                            initParsetree();
+                            return;
+                        }
+                        preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                        String parVal=getParVal(str);
+                        preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                        nowNode->addPar(parName,parVal);
+
+                        if(preprocessor::isChar(str,">"))
+                            break;
+                        if(str.length()==0)
+                        {
+                            preprocessor::mistake("区块头必须以>作为结尾");
+                            initParsetree();
+                            return;
+                        }
+                    }
+                }
+            }
+            continue;
+        }
+
+        //对field的处理
+        if(str.indexOf("=")!=-1)
+        {
+            QStringList varlist=str.split("=");
+            nowNode->addField(varlist[0],varlist[1]);
+            continue;
+        }
+
+        //什么都不是就过
+    }
 }
