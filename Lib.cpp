@@ -59,3 +59,6 @@ String Lib::input(String information)
     cin>>content;
     return content;
 }
+
+void Lib::RemoveFile(String path)
+{QFile::remove(path);}

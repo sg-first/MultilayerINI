@@ -39,7 +39,8 @@ public:
     String getCode(vector<String>layer);
     String readPar(vector<String>layer,String par);
     //写
-    void writeVar(vector<String>layer,String var,String val);
+    String writeVar(vector<String>layer,String var,String val);
+    void writeVarToFile(vector<String>layer,String var,String val,String path);
 
 private:
     //分析有关

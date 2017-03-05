@@ -236,7 +236,7 @@ String MINI::getCode(vector<String> layer)
     return NULL_String;
 }
 
-void MINI::writeVar(vector<String> layer, String var, String val)
+String MINI::writeVar(vector<String> layer, String var, String val)
 {
     vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
     int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
@@ -311,4 +311,13 @@ void MINI::writeVar(vector<String> layer, String var, String val)
             continue;
         }
     }
+
+    setCode(newcode);
+    return newcode;
+}
+
+void MINI::writeVarToFile(vector<String> layer, String var, String val, String path)
+{
+    aLib->RemoveFile(path);
+    aLib->WriteTXT(path,writeVar(layer,var,val));
 }
