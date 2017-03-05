@@ -36,23 +36,24 @@ String MINI::getParName(String &str)
 String MINI::getParVal(String &str)
 {return getBlockName(str);}
 
-String MINI::blockEnd(String &str,vector<SI> &stack)
+bool MINI::blockEnd(String &str,vector<SI> &stack)
 {
     String blockName=getBlockName(str);
     preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
     if(blockName!=stack.back().first) //检查和区块头是否对应
     {
         preprocessor::mistake("区块结尾和最近的区块头不对应");
-        return NULL_String;
+        return false;
     }
     if(!preprocessor::isChar(str,">"))
     {
         preprocessor::mistake("区块尾不能含有除区块名外其他元素");
-        return NULL_String;
+        return false;
     }
     if(!stack.back().second) //检查是否要弹出待查区块（不准备跳过的区块）
-    {return NULL_String;} //如果待查区块被弹出，说明无法向下一级搜索，即没有这个var
+    {return false;} //如果待查区块被弹出，说明无法向下一级搜索，即没有这个var
     stack.pop_back(); //似乎直接弹栈即可
+    return true;
 }
 
 void MINI::blockBegin(String &str, vector<SI> &stack, vector<String> &layer,int &nowLayerSub)
@@ -85,7 +86,7 @@ String MINI::readVar(vector<String> layer, String var)
             if(preprocessor::removeChar(str,"/")) //检查是区块起始还是区块结尾
             {
                 //是区块结尾
-                if(blockEnd(str,stack)==NULL_String)
+                if(!blockEnd(str,stack))
                 {return NULL_String;}
             }
             else
@@ -115,6 +116,7 @@ String MINI::readVar(vector<String> layer, String var)
         //什么都不是
         continue;
     }
+    return NULL_String;
 }
 
 String MINI::readPar(vector<String> layer, String par)
@@ -133,7 +135,7 @@ String MINI::readPar(vector<String> layer, String par)
             if(preprocessor::removeChar(str,"/")) //检查是区块起始还是区块结尾
             {
                 //是区块结尾
-                if(blockEnd(str,stack)==NULL_String)
+                if(!blockEnd(str,stack))
                 {return NULL_String;}
             }
             else
@@ -182,4 +184,53 @@ String MINI::readPar(vector<String> layer, String par)
         //别的case都不管
         continue;
     }
+    return NULL_String;
+}
+
+String MINI::getCode(vector<String> layer)
+{
+    vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
+    int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
+    String newcode="";
+    bool inBlock=false;
+
+    for(String str:codelist)
+    {
+        preprocessor::removeChar(str," ");
+
+        //对区块的处理
+        if(!inBlock&&preprocessor::removeChar(str,"<"))
+        {
+            if(preprocessor::removeChar(str,"/")) //检查是区块起始还是区块结尾
+            {
+                //是区块结尾
+                if(inBlock)
+                {
+                    String blockName=getBlockName(str);
+                    if(blockName==layer.back()) //准备弹出要取内部代码的区块
+                        return newcode;
+                    newcode+=str+"\n\r"; //区块结尾不算在内，所以后连接
+                }
+
+                if(!blockEnd(str,stack))
+                {return NULL_String;}
+            }
+            else
+            {
+                //是区块起始
+                blockBegin(str,stack,layer,nowLayerSub);
+                if(inBlock)
+                    newcode+=str+"\n\r"; //区块开头不算在内，所以先连接
+                if(stack.size()==layer.size())
+                    inBlock=true;
+            }
+            continue;
+        }
+
+        //其它
+        if(inBlock)
+            newcode+=str+"\n\r";
+        continue;
+    }
+    return NULL_String;
 }
