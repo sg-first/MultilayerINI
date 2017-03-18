@@ -1,10 +1,11 @@
 #include "mini.h"
 #include "preprocessor.h"
 
-MINI::MINI(String path)
+MINI::MINI(String content, bool ispath)
 {
-    String code=aLib->ReadTXT(path);
-    this->setCode(code);
+    if(ispath)
+    {String content=aLib->ReadTXT(content);}
+    this->setCode(content);
 }
 
 void MINI::initParsetree()
@@ -411,4 +412,15 @@ void MINI::toTree()
 
         //什么都不是就过
     }
+}
+
+Tree *MINI::getTree() //调用之前需保证树被创建
+{return this->parsetree;}
+
+String MINI::getCode()
+{
+    String code="";
+    for(String i:codelist)
+    {code+=i+"\n\r";}
+    return code;
 }
