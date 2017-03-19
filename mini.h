@@ -33,17 +33,19 @@ public:
     ~Tree();
 };
 
+enum MINIsta{CODE,TREE,ALL};
 class MINI
 {
 public:
     MINI(String content,bool ispath=true);
     MINI(Tree *tree);
-    MINI(){}
+
     void setCode(String code);
     Tree* toTree(); //把代码翻译成树（因为涉及到错误返回的问题，这里不直接返回树）
     Tree* getTree();
     String toCode(); //把树翻译成代码
     String getCode();
+    MINIsta getState();
     //读
     String readVar(vector<String>layer,String var);
     String getCode(vector<String>layer);
@@ -65,5 +67,4 @@ private:
     void initParsetree();
     list<String>codelist;
     Tree *parsetree=nullptr;
-    bool isParse();
 };

@@ -8,6 +8,19 @@ MINI::MINI(String content, bool ispath)
     this->setCode(content);
 }
 
+MINI::MINI(Tree *tree)
+{this->parsetree=tree;}
+
+MINIsta MINI::getState()
+{
+    if(this->parsetree!=nullptr&&this->codelist.size()!=0)
+        return ALL;
+    if(this->parsetree!=nullptr)
+        return TREE;
+    else
+        return CODE;
+}
+
 void MINI::initParsetree()
 {
     delete parsetree;
@@ -22,9 +35,6 @@ void MINI::setCode(String code)
     for(String i:ary)
     {this->codelist.push_back(i);}
 }
-
-bool MINI::isParse()
-{return !(this->parsetree==nullptr);}
 
 String MINI::getBlockName(String &str)
 {
@@ -426,4 +436,9 @@ String MINI::getCode()
     for(String i:codelist)
     {code+=i+"\n\r";}
     return code;
+}
+
+String MINI::toCode()
+{
+
 }
