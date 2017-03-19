@@ -6,6 +6,8 @@ void preprocessor::deleteSpace(String &str) //把几个连一起的空格变成�
     bool isQuotes=false;
     String newstr="";
 
+    str=str.replace("\t"," "); //删除制表符
+
     for(auto i:str)
     {
         if(isQuotes) //前一个字符是引号

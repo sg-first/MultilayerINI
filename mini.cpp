@@ -405,6 +405,7 @@ Tree *MINI::toTree() //调用之前需保证代码被创建
 
                         if(preprocessor::isChar(str,">"))
                             break;
+
                         if(str.length()==0)
                         {
                             preprocessor::mistake("区块头必须以>作为结尾");
