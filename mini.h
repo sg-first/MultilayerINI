@@ -26,7 +26,7 @@ public:
     String readVar(String var,bool searchAll=false);
     String readPar(String var);
     //特殊操作
-    String getCode();
+    String getCode(String tab=NULL_String);
     //至于遍历子树就自己遍历吧……
     vector<Tree*>subtree;
     String name;

@@ -4,7 +4,7 @@
 MINI::MINI(String content, bool ispath)
 {
     if(ispath)
-    {String content=aLib->ReadTXT(content);}
+    {content=aLib->ReadTXT(content);}
     this->setCode(content);
 }
 
@@ -345,7 +345,7 @@ String MINI::writeVar(vector<String> layer, String var, String val,String path)
 Tree *MINI::toTree() //调用之前需保证代码被创建
 {
     vector<String>stack;
-    Tree* nowNode=new Tree(""); //根节点没名字
+    Tree* nowNode=new Tree(NULL_String); //根节点没名字
     this->parsetree=nowNode;
 
     for(String str:codelist)

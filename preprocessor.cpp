@@ -43,7 +43,7 @@ bool preprocessor::removeChar(String &str, String Char)
 {
     if(isChar(str,Char))
     {
-        str.right(str.length()-1);
+        str=str.right(str.length()-1);
         return true;
     }
     return false;

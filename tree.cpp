@@ -92,22 +92,25 @@ String Tree::readPar(String var)
 Tree* Tree::getFather()
 {return this->father;}
 
-String Tree::getCode()
+String Tree::getCode(String tab)
 {
-    String code="<"+this->name+" ";
-
-    for(variable i:par)
-    {code+=i.first+"="+i.second+" ";}
-
-    code+=">\n\r";
+    String code="";
+    if(this->name!=NULL_String) //根节点没有起始的<>
+    {
+        code=tab+"<"+this->name+" ";
+        for(variable i:par)
+        {code+=i.first+"="+i.second+" ";}
+        code+=">\n\r";
+    }
 
     for(variable i:field)
-    {code+=i.first+"="+i.second+"\n\r";}
+    {code+=tab+i.first+"="+i.second+"\n\r";}
 
     for(Tree* i:subtree)
-    {code+=i->getCode()+"\n\r";}
+    {code+=i->getCode(tab+"    ")+"\n\r";}
 
-    code+=">";
+    if(this->name!=NULL_String)
+    {code+=tab+">";}
 
     return code;
 }
