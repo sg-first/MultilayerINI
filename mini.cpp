@@ -11,6 +11,9 @@ MINI::MINI(String content, bool ispath)
 MINI::MINI(Tree *tree)
 {this->parsetree=tree;}
 
+MINI::~MINI()
+{delete this->parsetree;}
+
 MINIsta MINI::getState()
 {
     if(this->parsetree!=nullptr&&this->codelist.size()!=0)
@@ -202,7 +205,7 @@ String MINI::readPar(vector<String> layer, String par)
     return NULL_String;
 }
 
-String MINI::getCode(vector<String> layer)
+String MINI::getBlockCode(vector<String> layer)
 {
     vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
     int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
@@ -251,7 +254,7 @@ String MINI::getCode(vector<String> layer)
     return NULL_String;
 }
 
-String MINI::writeVar(vector<String> layer, String var, String val)
+String MINI::writeVar(vector<String> layer, String var, String val,String path)
 {
     vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
     int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
@@ -329,16 +332,17 @@ String MINI::writeVar(vector<String> layer, String var, String val)
 
     setCode(newcode);
     initParsetree();
+
+    if(path!=NULL_String)
+    {
+        aLib->RemoveFile(path);
+        aLib->WriteTXT(path,newcode);
+    }
+
     return newcode;
 }
 
-void MINI::writeVarToFile(vector<String> layer, String var, String val, String path)
-{
-    aLib->RemoveFile(path);
-    aLib->WriteTXT(path,writeVar(layer,var,val));
-}
-
-Tree *MINI::toTree()
+Tree *MINI::toTree() //调用之前需保证代码被创建
 {
     vector<String>stack;
     Tree* nowNode=new Tree(""); //根节点没名字
@@ -430,15 +434,29 @@ Tree *MINI::toTree()
 Tree *MINI::getTree() //调用之前需保证树被创建
 {return this->parsetree;}
 
-String MINI::getCode()
+String MINI::getCode(String path) //调用之前需保证代码被创建
 {
     String code="";
     for(String i:codelist)
     {code+=i+"\n\r";}
+
+    if(path!=NULL_String)
+    {
+        aLib->RemoveFile(path);
+        aLib->WriteTXT(path,code);
+    }
+
     return code;
 }
 
-String MINI::toCode()
+String MINI::toCode(String path) //调用之前需保证树被创建
 {
-
+    String code=this->parsetree->getCode();
+    this->setCode(code);
+    if(path!=NULL_String)
+    {
+        aLib->RemoveFile(path);
+        aLib->WriteTXT(path,code);
+    }
+    return code;
 }

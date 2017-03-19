@@ -91,3 +91,23 @@ String Tree::readPar(String var)
 
 Tree* Tree::getFather()
 {return this->father;}
+
+String Tree::getCode()
+{
+    String code="<"+this->name+" ";
+
+    for(variable i:par)
+    {code+=i.first+"="+i.second+" ";}
+
+    code+=">\n\r";
+
+    for(variable i:field)
+    {code+=i.first+"="+i.second+"\n\r";}
+
+    for(Tree* i:subtree)
+    {code+=i->getCode()+"\n\r";}
+
+    code+=">";
+
+    return code;
+}

@@ -25,6 +25,8 @@ public:
     //实际操作
     String readVar(String var,bool searchAll=false);
     String readPar(String var);
+    //特殊操作
+    String getCode();
     //至于遍历子树就自己遍历吧……
     vector<Tree*>subtree;
     String name;
@@ -39,22 +41,23 @@ class MINI
 public:
     MINI(String content,bool ispath=true);
     MINI(Tree *tree);
+    ~MINI();
 
     void setCode(String code);
     Tree* toTree(); //把代码翻译成树（因为涉及到错误返回的问题，这里不直接返回树）
     Tree* getTree();
-    String toCode(); //把树翻译成代码
-    String getCode();
+    String toCode(String path=NULL_String);
+    String getCode(String path=NULL_String);
     MINIsta getState();
     //读
     String readVar(vector<String>layer,String var);
-    String getCode(vector<String>layer);
+    String getBlockCode(vector<String>layer);
     String readPar(vector<String>layer,String par);
     String readVarInTree(vector<String>layer,String var);
     String readParInTree(vector<String>layer,String par);
     //写
-    String writeVar(vector<String>layer,String var,String val);
-    void writeVarToFile(vector<String>layer,String var,String val,String path);
+    String writeVar(vector<String>layer, String var, String val, String path=NULL_String);
+    String writePar(vector<String>layer, String var, String val, String path=NULL_String);
 
 private:
     //分析有关
