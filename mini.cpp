@@ -76,7 +76,7 @@ bool MINI::blockEnd(String &str,vector<SI> &stack)
     return true;
 }
 
-void MINI::blockBegin(String &str, vector<SI> &stack, vector<String> &layer,int &nowLayerSub)
+void MINI::blockBegin(String &str, vector<SI> &stack, vector<String> &layer,unsigned int &nowLayerSub)
 {
     String blockName=getBlockName(str);
     preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
@@ -94,7 +94,7 @@ void MINI::blockBegin(String &str, vector<SI> &stack, vector<String> &layer,int 
 String MINI::readVar(vector<String> layer, String var)
 {
     vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
-    int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
+    unsigned int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
 
     for(String str:codelist)
     {
@@ -142,7 +142,7 @@ String MINI::readPar(vector<String> layer, String par)
 {
     typedef pair<String,bool> SI;
     vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
-    int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
+    unsigned int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
 
     for(String str:codelist)
     {
@@ -208,7 +208,7 @@ String MINI::readPar(vector<String> layer, String par)
 String MINI::getBlockCode(vector<String> layer)
 {
     vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
-    int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
+    unsigned int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
     String newcode="";
     bool inBlock=false;
 
@@ -257,7 +257,7 @@ String MINI::getBlockCode(vector<String> layer)
 String MINI::writeVar(vector<String> layer, String var, String val,String path)
 {
     vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
-    int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
+    unsigned int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
     String newcode="";
     bool finished=false;
     String addcode=var+"="+val;
@@ -468,3 +468,24 @@ String MINI::toCode(String path) //调用之前需保证树被创建
     }
     return code;
 }
+
+Tree* searchSubTree(vector<Tree*> &nowsubTree,vector<String> &layer,unsigned int nowLayerSub)
+{
+    for(Tree* i:nowsubTree)
+    {
+        if(i->name==layer.at(nowLayerSub))
+        {
+            nowLayerSub++;
+            if(nowLayerSub==layer.size()) //已经到达要查找的层级
+            {return i;}
+            return searchSubTree(i->subtree,layer,nowLayerSub); //未达到，向下一层搜索
+        }
+    }
+    return nullptr;
+}
+
+String MINI::readParInTree(vector<String> layer, String par)
+{return searchSubTree(this->parsetree->subtree,layer,0)->readPar(par);}
+
+String MINI::readVarInTree(vector<String> layer, String var)
+{return searchSubTree(this->parsetree->subtree,layer,0)->readVar(var);}

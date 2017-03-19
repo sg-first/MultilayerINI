@@ -11,7 +11,6 @@ class Tree
 {
 private:
     Tree* father;
-    String name;
 public:
     //基本操作
     void addField(String var,String val);
@@ -22,7 +21,7 @@ public:
     void deleteTree(Tree *tree);
     Tree* getFather();
     //实际操作
-    String readVar(String var,bool searchAll=false);
+    String readVar(String var);
     String readPar(String var);
     //特殊操作
     String getCode(String tab=NULL_String);
@@ -30,6 +29,7 @@ public:
     vector<Tree*>subtree;
     vector<variable>field;
     vector<variable>par;
+    String name;
 
     Tree(String name,Tree* father=nullptr):father(father),name(name){}
     ~Tree();
@@ -65,7 +65,7 @@ private:
     String getParName(String &str);
     String getParVal(String &str);
     bool blockEnd(String &str, vector<SI>&stack);
-    void blockBegin(String &str, vector<SI>&stack, vector<String> &layer, int &nowLayerSub);
+    void blockBegin(String &str, vector<SI>&stack, vector<String> &layer, unsigned int &nowLayerSub);
     //存储有关
     void initParsetree();
     list<String>codelist;
