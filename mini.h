@@ -40,7 +40,7 @@ public:
     MINI(Tree *tree);
     MINI(){}
     void setCode(String code);
-    void toTree(); //把代码翻译成树（因为涉及到错误返回的问题，这里不直接返回树）
+    Tree* toTree(); //把代码翻译成树（因为涉及到错误返回的问题，这里不直接返回树）
     Tree* getTree();
     String toCode(); //把树翻译成代码
     String getCode();

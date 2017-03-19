@@ -328,7 +328,7 @@ void MINI::writeVarToFile(vector<String> layer, String var, String val, String p
     aLib->WriteTXT(path,writeVar(layer,var,val));
 }
 
-void MINI::toTree()
+Tree *MINI::toTree()
 {
     vector<String>stack;
     Tree* nowNode=new Tree(""); //根节点没名字
@@ -350,12 +350,13 @@ void MINI::toTree()
                 {
                     preprocessor::mistake("区块结尾和最近的区块头不对应");
                     initParsetree();
-                    return;
+                    return nullptr;
                 }
                 if(!preprocessor::isChar(str,">"))
                 {
                     preprocessor::mistake("区块尾不能含有除区块名外其他元素");
-                    return;
+                    initParsetree();
+                    return nullptr;
                 }
                 //似乎直接弹栈即可
                 stack.pop_back();
@@ -381,7 +382,7 @@ void MINI::toTree()
                         {
                             preprocessor::mistake("每个区块参数必须有一个值");
                             initParsetree();
-                            return;
+                            return nullptr;
                         }
                         preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
                         String parVal=getParVal(str);
@@ -394,7 +395,7 @@ void MINI::toTree()
                         {
                             preprocessor::mistake("区块头必须以>作为结尾");
                             initParsetree();
-                            return;
+                            return nullptr;
                         }
                     }
                 }
@@ -412,6 +413,8 @@ void MINI::toTree()
 
         //什么都不是就过
     }
+
+    return this->parsetree;
 }
 
 Tree *MINI::getTree() //调用之前需保证树被创建

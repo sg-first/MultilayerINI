@@ -64,14 +64,15 @@ String Tree::readVar(String var, bool searchAll)
         if(i.first==var)
             return i.second;
     }
+
     if(!searchAll)
-    {return NULL_String;}
+    {return NULL_String;} //如果不想查子树，直接返回就行了
     else
     {
         for(Tree* t:subtree)
         {
             String ret=t->readVar(var,true);
-            if(set!=NULL_String)
+            if(ret!=NULL_String)
                 return ret;
         }
         return NULL_String;
