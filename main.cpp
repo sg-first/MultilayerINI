@@ -3,12 +3,13 @@
 
 Lib *aLib;
 
-int main(int argc, char *argv[])
+int main()
 {
-    /*QCoreApplication a(argc, argv);
-    return a.exec();*/
     aLib=new Lib;
     MINI mymini("D:/123.mini");
     mymini.toTree();
+    Tree* tree=mymini.getTree();
+    MINI oth(tree);
+    oth.toCode("D:/mycode.txt");
     return 0;
 }

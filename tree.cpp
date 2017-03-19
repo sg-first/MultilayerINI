@@ -94,23 +94,20 @@ Tree* Tree::getFather()
 
 String Tree::getCode(String tab)
 {
-    String code="";
-    if(this->name!=NULL_String) //根节点没有起始的<>
-    {
-        code=tab+"<"+this->name+" ";
-        for(variable i:par)
-        {code+=i.first+"="+i.second+" ";}
-        code+=">\n\r";
-    }
+    //通过这个方法得到块代码，块必须有名
+    String code=tab+"<"+this->name+" ";
+
+    for(variable i:par)
+    {code+=i.first+"="+i.second+" ";}
+    code+=">\r\n";
 
     for(variable i:field)
-    {code+=tab+i.first+"="+i.second+"\n\r";}
+    {code+=tab+i.first+"="+i.second+"\r\n";}
 
     for(Tree* i:subtree)
-    {code+=i->getCode(tab+"    ")+"\n\r";}
+    {code+=i->getCode(tab+"    ")+"\r\n";}
 
-    if(this->name!=NULL_String)
-    {code+=tab+">";}
+    code+=tab+"</"+this->name+">";
 
     return code;
 }

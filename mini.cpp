@@ -41,14 +41,14 @@ void MINI::setCode(String code)
 
 String MINI::getBlockName(String &str)
 {
-    String ret=preprocessor::getToken(str,vector<String>(" ",">"));
+    String ret=preprocessor::getToken(str,vector<String>{" ",">"});
     str=str.right(str.length()-ret.length()); //消耗字符
     return ret;
 }
 
 String MINI::getParName(String &str)
 {
-    String ret=preprocessor::getToken(str,vector<String>(" ","="));
+    String ret=preprocessor::getToken(str,vector<String>{" ","="});
     str=str.right(str.length()-ret.length()); //消耗字符
     return ret;
 }
@@ -451,7 +451,14 @@ String MINI::getCode(String path) //调用之前需保证代码被创建
 
 String MINI::toCode(String path) //调用之前需保证树被创建
 {
-    String code=this->parsetree->getCode();
+    String code="";
+    //根节点一定无名无参数
+    for(variable i:parsetree->field)
+    {code+=i.first+"="+i.second+"\r\n";}
+
+    for(Tree* i:parsetree->subtree)
+    {code+=i->getCode()+"\r\n";}
+
     this->setCode(code);
     if(path!=NULL_String)
     {

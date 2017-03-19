@@ -10,9 +10,8 @@ typedef pair<String,bool>SI; //包含是否跳过信息的栈元素类型
 class Tree
 {
 private:
-    vector<variable>field;
-    vector<variable>par;
     Tree* father;
+    String name;
 public:
     //基本操作
     void addField(String var,String val);
@@ -27,9 +26,10 @@ public:
     String readPar(String var);
     //特殊操作
     String getCode(String tab=NULL_String);
-    //至于遍历子树就自己遍历吧……
+    //子树和成员
     vector<Tree*>subtree;
-    String name;
+    vector<variable>field;
+    vector<variable>par;
 
     Tree(String name,Tree* father=nullptr):father(father),name(name){}
     ~Tree();
@@ -44,7 +44,7 @@ public:
     ~MINI();
 
     void setCode(String code);
-    Tree* toTree(); //把代码翻译成树（因为涉及到错误返回的问题，这里不直接返回树）
+    Tree* toTree(); //把代码翻译成树
     Tree* getTree();
     String toCode(String path=NULL_String);
     String getCode(String path=NULL_String);
