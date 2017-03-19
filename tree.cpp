@@ -93,7 +93,7 @@ String Tree::getCode(String tab)
     {code+=tab+i.first+"="+i.second+"\r\n";}
 
     for(Tree* i:subtree)
-    {code+=i->getCode(tab+"    ")+"\r\n";}
+    {code+=i->getCode(tab+"\t")+"\r\n";}
 
     code+=tab+"</"+this->name+">";
 
