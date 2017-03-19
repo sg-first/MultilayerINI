@@ -17,5 +17,8 @@ int main(int argc, char *argv[])
     val=other.readVarInTree(vector<String>{"name1","name2"},"var4545");
     val=other.readPar(vector<String>{"name1","name2"},"sdsd");
     val=other.readVar(vector<String>{"name1","name2"},"var4545");
+
+    other.writeVar(vector<String>{"name1","name2"},"var5","hahaha");
+    val=other.writePar(vector<String>{"name1","name2"},"ssd","hahaha","D:/mycode.txt");
     return a.exec();
 }

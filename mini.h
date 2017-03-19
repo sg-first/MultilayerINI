@@ -49,6 +49,7 @@ public:
     String toCode(String path=NULL_String);
     String getCode(String path=NULL_String);
     MINIsta getState();
+    void format();
     //读
     String readVar(vector<String>layer,String var);
     String getBlockCode(vector<String>layer);
@@ -65,7 +66,7 @@ private:
     String getParName(String &str);
     String getParVal(String &str);
     bool blockEnd(String &str, vector<SI>&stack);
-    void blockBegin(String &str, vector<SI>&stack, vector<String> &layer, unsigned int &nowLayerSub);
+    String blockBegin(String &str, vector<SI>&stack, vector<String> &layer, unsigned int &nowLayerSub);
     //存储有关
     void initParsetree();
     list<String>codelist;

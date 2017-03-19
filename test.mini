@@ -1,0 +1,11 @@
+<name1 par1=11 par2=22>
+	var1=22
+	var2=3434
+	<name2 sdsd=33 tt=55>
+		var4545=ssa
+	</name2>
+</name1>
+
+<test a=1 b=2>
+	o=22
+</test>

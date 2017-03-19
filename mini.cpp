@@ -24,6 +24,13 @@ MINIsta MINI::getState()
         return CODE;
 }
 
+void MINI::format()
+{
+    initParsetree();
+    toTree();
+    toCode();
+}
+
 void MINI::initParsetree()
 {
     delete parsetree;
@@ -76,18 +83,20 @@ bool MINI::blockEnd(String &str,vector<SI> &stack)
     return true;
 }
 
-void MINI::blockBegin(String &str, vector<SI> &stack, vector<String> &layer,unsigned int &nowLayerSub)
+String MINI::blockBegin(String &str, vector<SI> &stack, vector<String> &layer,unsigned int &nowLayerSub)
 {
     String blockName=getBlockName(str);
     preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
 
-    if(stack.size()<layer.size()&&blockName==layer[nowLayerSub+1]) //检查这个区块是否是目前要匹配的下级区块（如果目前已经匹配到了也一样跳过）
+    if(stack.size()<layer.size()&&blockName==layer[nowLayerSub]) //检查这个区块是否是目前要匹配的区块（如果目前已经匹配到了目标区块也一样跳过）
     {
         nowLayerSub++;
         stack.push_back(SI(blockName,false));
     }
     else
     {stack.push_back(SI(blockName,true));} //如果不是需要的区块，准备跳过它
+
+    return blockName;
 }
 
 //直读函数
@@ -228,7 +237,7 @@ String MINI::getBlockCode(vector<String> layer)
                     String blockName=getBlockName(str);
                     if(blockName==layer.back()) //准备弹出要取内部代码的区块
                         return newcode;
-                    newcode+=oriStr+"\n\r"; //区块结尾不算在内，所以后连接
+                    newcode+=oriStr+"\r\n"; //区块结尾不算在内，所以后连接
                 }
 
                 if(!blockEnd(str,stack))
@@ -239,7 +248,7 @@ String MINI::getBlockCode(vector<String> layer)
                 //是区块起始
                 blockBegin(str,stack,layer,nowLayerSub);
                 if(inBlock)
-                    newcode+=oriStr+"\n\r"; //区块开头不算在内，所以先连接
+                    newcode+=oriStr+"\r\n"; //区块开头不算在内，所以先连接
                 if(stack.size()==layer.size())
                     inBlock=true;
             }
@@ -248,7 +257,7 @@ String MINI::getBlockCode(vector<String> layer)
 
         //其它
         if(inBlock)
-            newcode+=oriStr+"\n\r";
+            newcode+=oriStr+"\r\n";
         continue;
     }
     return NULL_String;
@@ -266,7 +275,7 @@ String MINI::writeVar(vector<String> layer, String var, String val,String path)
     {
         if(finished)
         {
-            newcode+=str+"\n\r";
+            newcode+=str+"\r\n";
             continue;
         }
         else
@@ -283,7 +292,7 @@ String MINI::writeVar(vector<String> layer, String var, String val,String path)
                     String blockName=getBlockName(str);
                     if(blockName==layer.back()) //准备弹出要添加（修改）变量的区块
                     {
-                        newcode+=addcode+"\n\r"+oriStr+"\n\r";
+                        newcode+=addcode+"\r\n"+oriStr+"\r\n";
                         finished=true;
                         continue;
                     }
@@ -296,7 +305,7 @@ String MINI::writeVar(vector<String> layer, String var, String val,String path)
                     //是区块起始
                     blockBegin(str,stack,layer,nowLayerSub);
                 }
-                newcode+=oriStr+"\n\r";
+                newcode+=oriStr+"\r\n";
                 continue;
             }
 
@@ -305,28 +314,138 @@ String MINI::writeVar(vector<String> layer, String var, String val,String path)
             {
                 if(stack.size()!=0&&stack.back().second) //检查该区块是否需要跳过
                 {
-                    newcode+=oriStr+"\n\r";
+                    newcode+=oriStr+"\r\n";
                     continue;
                 }
 
                 if(stack.size()!=layer.size()) //检查是否已经到达要查找的区块的层级
                 {
-                    newcode+=oriStr+"\n\r";
+                    newcode+=oriStr+"\r\n";
                     continue;
                 }
 
                 QStringList varlist=str.split("=");
                 if(varlist[0]==var)
                 {
-                    newcode+=addcode+"\n\r";
+                    newcode+=addcode+"\r\n";
                     finished=true;
                     continue;
                 }
             }
 
             //什么都不是
-            newcode+=oriStr+"\n\r";
+            newcode+=oriStr+"\r\n";
             continue;
+        }
+    }
+
+    setCode(newcode);
+    initParsetree();
+
+    if(path!=NULL_String)
+    {
+        aLib->RemoveFile(path);
+        aLib->WriteTXT(path,newcode);
+    }
+
+    return newcode;
+}
+
+String MINI::writePar(vector<String> layer, String var, String val, String path)
+{
+    vector<SI>stack; //栈中包含了是否需要跳过该区块的信息
+    unsigned int nowLayerSub=0; //目前匹配到的层级（对应layer和stack的下标）
+    String newcode="";
+    bool finished=false;
+    String addcode=var+"="+val;
+
+    for(String str:codelist)
+    {
+        if(finished)
+        {
+            newcode+=str+"\r\n";
+            continue;
+        }
+        else
+        {
+            String oriStr=str;
+            preprocessor::removeChar(str," ");
+
+            //对区块的处理
+            if(preprocessor::removeChar(str,"<"))
+            {
+                if(preprocessor::removeChar(str,"/")) //检查是区块起始还是区块结尾
+                {
+                    //是区块结尾
+                    if(!blockEnd(str,stack))
+                    {return NULL_String;}
+                }
+                else
+                {
+                    //是区块起始
+                    String blockName=blockBegin(str,stack,layer,nowLayerSub);
+
+                    if(stack.size()!=0&&stack.back().second) //检查该区块是否需要跳过
+                    {
+                        newcode+=oriStr+"\r\n";
+                        continue;
+                    }
+
+                    if(stack.size()!=layer.size()) //检查是否已经到达要查找的区块的层级
+                    {
+                        newcode+=oriStr+"\r\n";
+                        continue;
+                    }
+
+                    //要更改的参数就在这个区块中，先前调用blockBegin已经消耗了区块名和空格，下面直接循环检查参数即可
+                    newcode+="<"+blockName+" "; //先连接上区块名
+                    newcode+=" "+addcode; //连接上新par，此时已经完成
+                    finished=true;
+                    if(!preprocessor::isChar(str,">")) //检查该区块是否有参数
+                    {
+                        while(1) //循环连接区块的其它参数
+                        {
+                            String parName=getParName(str);
+                            preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+
+                            if(parName==var) //判断是否是要找的那个par
+                            {
+                                //已经修改，直接跳过。不过还要消耗字符，否则卡死
+                                preprocessor::removeChar(str,"=");
+                                preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                                getParVal(str);
+                                preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                            }
+                            else
+                            {
+                                if(!preprocessor::removeChar(str,"="))
+                                {
+                                    preprocessor::mistake("每个区块参数必须有一个值");
+                                    return NULL_String;
+                                }
+                                preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                                String parVal=getParVal(str);
+                                preprocessor::removeChar(str," "); //每结束一部分解析都必须去空格
+                                newcode+=" "+parName+"="+parVal; //直接连接即可
+                            }
+
+                            if(preprocessor::isChar(str,">"))
+                                break;
+
+                            if(str.length()==0)
+                            {
+                                preprocessor::mistake("区块头必须以>作为结尾");
+                                return NULL_String;
+                            }
+                        }
+                    }
+                    newcode+=">\r\n";
+                    continue;
+                }
+            }
+
+            //什么都不是
+            newcode+=oriStr+"\r\n";
         }
     }
 
@@ -439,7 +558,7 @@ String MINI::getCode(String path) //调用之前需保证代码被创建
 {
     String code="";
     for(String i:codelist)
-    {code+=i+"\n\r";}
+    {code+=i+"\r\n";}
 
     if(path!=NULL_String)
     {
