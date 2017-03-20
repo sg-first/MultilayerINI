@@ -604,7 +604,17 @@ Tree* searchSubTree(vector<Tree*> &nowsubTree,vector<String> &layer,unsigned int
 }
 
 String MINI::readParInTree(vector<String> layer, String par)
-{return searchSubTree(this->parsetree->subtree,layer,0)->readPar(par);}
+{
+    Tree *tree=searchSubTree(this->parsetree->subtree,layer,0);
+    if(tree==nullptr)
+        return NULL_String;
+    return tree->readPar(par);
+}
 
 String MINI::readVarInTree(vector<String> layer, String var)
-{return searchSubTree(this->parsetree->subtree,layer,0)->readVar(var);}
+{
+    Tree *tree=searchSubTree(this->parsetree->subtree,layer,0);
+    if(tree==nullptr)
+        return NULL_String;
+    return tree->readVar(var);
+}
