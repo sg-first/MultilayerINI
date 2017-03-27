@@ -6,11 +6,11 @@ Tree::~Tree()
     {delete i;}
 }
 
-void Tree::addField(String var, String val)
-{this->field.push_back(variable(var,val));}
+void Tree::addField(variable var)
+{this->field.push_back(var);}
 
-void Tree::addPar(String var, String val)
-{this->par.push_back(variable(var,val));}
+void Tree::addPar(variable var)
+{this->par.push_back(var);}
 
 void Tree::addChildNode(Tree *tree)
 {this->subtree.push_back(tree);}

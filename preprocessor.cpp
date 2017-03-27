@@ -73,7 +73,11 @@ String preprocessor::getToken(String str, vector<String> terminatorList)
 }
 
 void preprocessor::mistake(String information)
-{aLib->output("error:"+information);}
+{
+    String error="error:"+information;
+    aLib->output(error);
+    throw error;
+}
 
 int preprocessor::getLen(String literal)
 {return literal.length();}

@@ -13,9 +13,9 @@ private:
     Tree* father;
 public:
     //基本操作
-    void addField(String var,String val);
+    void addField(variable var);
     void deleteField(String var);
-    void addPar(String var,String val);
+    void addPar(variable var);
     void deletePar(String var);
     void addChildNode(Tree *tree);
     void deleteTree(Tree *tree);
@@ -61,13 +61,6 @@ public:
     String writePar(vector<String>layer, String var, String val, String path=NULL_String);
 
 private:
-    //分析有关
-    String getBlockName(String &str);
-    String getParName(String &str);
-    String getParVal(String &str);
-    bool blockEnd(String &str, vector<SI>&stack);
-    String blockBegin(String &str, vector<SI>&stack, vector<String> &layer, unsigned int &nowLayerSub);
-    //存储有关
     void initParsetree();
     list<String>codelist;
     Tree *parsetree=nullptr;
