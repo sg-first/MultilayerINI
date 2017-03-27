@@ -68,12 +68,10 @@ bool blockEndMistakeCheck(String blockName,vector<SI>&stack,String &str) //已�
     if(blockName!=stack.back().first) //检查和区块头是否对应
     {
         preprocessor::mistake("区块结尾和最近的区块头不对应");
-        return false;
     }
     if(!preprocessor::isChar(str,">"))
     {
         preprocessor::mistake("区块尾不能含有除区块名外其他元素");
-        return false;
     }
     return true;
 }
@@ -83,12 +81,10 @@ bool blockEndMistakeCheck(String blockName,vector<String>&stack,String &str) //�
     if(blockName!=stack.back()) //检查和区块头是否对应
     {
         preprocessor::mistake("区块结尾和最近的区块头不对应");
-        return false;
     }
     if(!preprocessor::isChar(str,">"))
     {
         preprocessor::mistake("区块尾不能含有除区块名外其他元素");
-        return false;
     }
     return true;
 }
@@ -245,7 +241,6 @@ String MINI::readPar(vector<String> layer, String par)
                         if(str.length()==0)
                         {
                             preprocessor::mistake("区块头必须以>作为结尾");
-                            return NULL_String;
                         }
                     }
                     return NULL_String; //给定区块查不到所要的var
@@ -453,7 +448,6 @@ String MINI::writePar(vector<String> layer, String var, String val, String path)
                             if(str.length()==0)
                             {
                                 preprocessor::mistake("区块头必须以>作为结尾");
-                                return NULL_String;
                             }
                         }
                     }
@@ -527,7 +521,6 @@ Tree *MINI::toTree() //调用之前需保证代码被创建
                         if(str.length()==0)
                         {
                             preprocessor::mistake("区块头必须以>作为结尾");
-                            return nullptr;
                         }
                     }
                 }
