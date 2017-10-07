@@ -20,6 +20,7 @@ public:
     void addChildNode(Tree *tree);
     void deleteTree(Tree *tree);
     Tree* getFather();
+    static Tree* searchSubTree(Tree *nowTree, vector<String> &layer);
     //实际操作
     String readVar(String var);
     String readPar(String var);

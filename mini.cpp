@@ -577,7 +577,7 @@ String MINI::toCode(String path) //调用之前需保证树被创建
     return code;
 }
 
-Tree* searchSubTree(vector<Tree*> &nowsubTree,vector<String> &layer,unsigned int nowLayerSub)
+Tree* searchSubTreeA(vector<Tree*> &nowsubTree,vector<String> &layer,unsigned int nowLayerSub)
 {
     for(Tree* i:nowsubTree)
     {
@@ -586,15 +586,20 @@ Tree* searchSubTree(vector<Tree*> &nowsubTree,vector<String> &layer,unsigned int
             nowLayerSub++;
             if(nowLayerSub==layer.size()) //已经到达要查找的层级
             {return i;}
-            return searchSubTree(i->subtree,layer,nowLayerSub); //未达到，向下一层搜索
+            return searchSubTreeA(i->subtree,layer,nowLayerSub); //未达到，向下一层搜索
         }
     }
     return nullptr;
 }
 
+Tree* Tree::searchSubTree(Tree* nowTree, vector<String> &layer)
+{
+    return searchSubTreeA(nowTree->subtree,layer,0);
+}
+
 String MINI::readParInTree(vector<String> layer, String par)
 {
-    Tree *tree=searchSubTree(this->parsetree->subtree,layer,0);
+    Tree *tree=Tree::searchSubTree(this->parsetree,layer);
     if(tree==nullptr)
         return NULL_String;
     return tree->readPar(par);
@@ -602,7 +607,7 @@ String MINI::readParInTree(vector<String> layer, String par)
 
 String MINI::readVarInTree(vector<String> layer, String var)
 {
-    Tree *tree=searchSubTree(this->parsetree->subtree,layer,0);
+    Tree *tree=Tree::searchSubTree(this->parsetree,layer);
     if(tree==nullptr)
         return NULL_String;
     return tree->readVar(var);
